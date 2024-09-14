@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(auto()) @map("_id")
+  email     String   @unique
+  password  String
+  name      String?
+  image     String?
+  goals      Goal[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Goal {
+  id            Int      @id @default(auto()) @map("_id")
+  title         String
+  description   String?
+  target        String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id])
+  userId        Int
+  activityLogs ActivityLog[]
+}
+
+model ActivityLog {
+  id          Int      @id @default(auto()) @map("_id")
+  date        DateTime @default(now())
+  description  String
+  goal        Goal     @relation(fields: [goalId], references: [id])
+  goalId      Int
+  userId      Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SocialFeed {
+  id        Int      @id @default(auto()) @map("_id")
+  content    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId      Int
+}
